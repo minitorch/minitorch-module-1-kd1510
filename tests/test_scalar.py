@@ -139,6 +139,13 @@ def test_topological_sort():
     backpropagate(h, 1.0)
     breakpoint()
 
+def test_eq2():
+    x = Scalar(0.0)
+    y = Scalar(0.0)
+    
+    z = x + 1.2 < y 
+    backpropagate(z, 1.0)
+
 
 # ## Task 1.4 - Computes checks on each of the derivatives.
 
@@ -164,4 +171,5 @@ def test_two_derivative(
     t2: Scalar,
 ) -> None:
     name, _, scalar_fn = fn
+    print(scalar_fn, name, t1, t2)
     derivative_check(scalar_fn, t1, t2)
