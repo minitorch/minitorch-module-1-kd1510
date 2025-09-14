@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Tuple
+from typing import Any, Iterable, Tuple
 
 from typing_extensions import Protocol
 
@@ -64,13 +64,13 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
     Returns:
         Non-constant Variables in topological order starting from the right.
     """
-    visited = []
+    visited_ids = []
 
     def dfs(variable: Variable, ordered: list[Variable]):
-        visited.append(variable)
+        visited_ids.append(variable.unique_id)
 
         for dep in variable.history.inputs:
-            if dep not in visited:
+            if dep.unique_id not in visited_ids:
                 dfs(dep, ordered)
 
         ordered.append(variable)
@@ -92,14 +92,22 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
 
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
-    scalars = {}
-    ordered = topological_sort(variable) 
+    scalars = {variable.unique_id: deriv}
+    ordered = topological_sort(variable)
+
     for node in reversed(ordered):
         if not node.is_leaf():
-            derivatives = node.chain_rule(deriv)
-            for d_key, d_val in derivatives:
-                scalars[d_key] = d_val
-            breakpoint()
+            derivatives = node.chain_rule(scalars[node.unique_id])
+
+            for variable, deriv in derivatives:
+                if variable.unique_id not in scalars:
+                    scalars[variable.unique_id] = 0
+                scalars[variable.unique_id] += deriv
+
+        if node.is_leaf():
+            node.accumulate_derivative(scalars[node.unique_id])
+
+    return
 
 
 @dataclass

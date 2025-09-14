@@ -165,8 +165,9 @@ class Sigmoid(ScalarFunction):
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
-        # TODO: Implement for Task 1.4.
-        raise NotImplementedError("Need to implement for Task 1.4")
+        (x, ) = ctx.saved_values
+        f_prime = operators.sigmoid(x) * (1 - operators.sigmoid(x))
+        return f_prime * d_output
 
 
 class ReLU(ScalarFunction):
@@ -179,8 +180,11 @@ class ReLU(ScalarFunction):
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
-        # TODO: Implement for Task 1.4.
-        raise NotImplementedError("Need to implement for Task 1.4")
+        (x, ) = ctx.saved_values
+        if x < 0:
+            return 0
+        else: 
+            return 1
 
 
 class Exp(ScalarFunction):
@@ -193,9 +197,10 @@ class Exp(ScalarFunction):
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
-        (x, ) = ctx.saved_values
+        (x,) = ctx.saved_values
         f_prime = operators.exp(x)
-        return d_output * f_prime 
+        return d_output * f_prime
+
 
 class LT(ScalarFunction):
     "Less-than function $f(x) =$ 1.0 if x is less than y else 0.0"

@@ -10,9 +10,8 @@ from minitorch import (
     Scalar,
     central_difference,
     derivative_check,
-    topological_sort,
     operators,
-    backpropagate
+    backpropagate,
 )
 
 from .strategies import assert_close, small_floats
@@ -138,6 +137,7 @@ def test_topological_sort():
 
     # Call backpropagate on the same graph
     backpropagate(h, 1.0)
+    breakpoint()
 
 
 # ## Task 1.4 - Computes checks on each of the derivatives.

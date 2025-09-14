@@ -170,24 +170,11 @@ class Scalar:
         assert h.last_fn is not None
         assert h.ctx is not None
 
-        # 1. Derivative of self with respect to input (which is inner fn)
-        # This would be -1/(x**2) where x = sin(2.0) so (-1 / (sin(2.0) ** 2)
         derivs = self.history.last_fn._backward(h.ctx, d_output)
 
-        # 2. Derivative of previous (may return multiple)
-        outputs = []
+        d_inputs = list(zip(self.history.inputs, derivs))
 
-        for i, prev in enumerate(self.history.inputs):
-            prev_history = prev.history
-            prev_fn = prev_history.last_fn
-
-             # 3. Multiply correct arguments
-            # This would be cos(2.0) * (-1 / sin(2.0) ** 2)
-            derivatives2 = prev_fn._backward(prev_history.ctx, derivs[i])
-
-            outputs.append((prev.unique_id, derivatives2))
-
-        return outputs 
+        return d_inputs
 
     def backward(self, d_output: Optional[float] = None) -> None:
         """

@@ -87,6 +87,7 @@ def test_chain_rule4() -> None:
 
     back = y.chain_rule(d_output=5)
     back = list(back)
+
     assert len(back) == 2
     variable, deriv = back[0]
     # assert variable.name == var1.name
